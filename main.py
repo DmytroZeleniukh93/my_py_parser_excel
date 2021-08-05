@@ -22,25 +22,31 @@ for row in sheet_read.iter_rows(min_row=5, max_row=15, min_col=2, max_col=15):
 def gerbor_kiev(clean_url):
     next_column = 2
     for url in clean_url:
-        print(url)
-        source = requests.get(url)
-        main_text = source.text
-        soup = BeautifulSoup(main_text, features="html.parser")
-        price = soup.find('span', {'class': 'price-number s-product-price'})
-        price = price.text
-        price = price.replace(' ', '')
-        price = price.replace('грн.', '')
-
-        # переводимо назад в формулу для ексель
-        formula = '=HYPERLINK("' + url + '";"' + price + '")'
-
-        new_sheet.cell(row=5, column=next_column).value = formula
-        next_column += 1
+        if url == 'x':
+            new_sheet.cell(row=5, column=next_column).value = 'x'
+            next_column += 1
+        elif url != 'x':
+            print(url)
+            try:
+                source = requests.get(url)
+                main_text = source.text
+                soup = BeautifulSoup(main_text, features="html.parser")
+                price = soup.find('span', {'class': 'price-number s-product-price'})
+                price = price.text
+                price = price.replace(' ', '')
+                price = price.replace('грн.', '')
+                formula = '=HYPERLINK("' + url + '";"' + price + '")'
+                new_sheet.cell(row=5, column=next_column).value = formula
+                next_column += 1
+            except AttributeError:
+                url_not_work = '=HYPERLINK("' + url + '";"' + '!404!' + '")'
+                new_sheet.cell(row=5, column=next_column).value = url_not_work
+                next_column += 1
 
 
 gerbor_kiev(clean_url[0:14])
 
-
+'''
 def brwland(clean_url):
     next_column = 2
     for url in clean_url:
@@ -232,5 +238,6 @@ def mebel_online(clean_url):
 
 mebel_online(clean_url[140:154])
 
-new_book.save('new_price_url.xlsx')
+'''
+new_book.save('new_price_url_2.xlsx')
 new_book.close()
