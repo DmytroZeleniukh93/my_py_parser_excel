@@ -1,7 +1,7 @@
 from tkinter import *
+from test_class import *
 
-
-class Window:
+class Window(Test):
     def __init__(self):
         self.root = Tk()
         self.root.title('Перевірка цін конкурентів')
@@ -16,9 +16,11 @@ class Window:
         Button(self.root, text='Пуск', command=self.button_action).pack()  # кнопка може приймати метод або функцію
 
     def button_action(self):
-        pass
+        print(test.read_settings())
+
 
 
 if __name__ == "__main__":
+    test = Test()
     window = Window()
     window.run()
