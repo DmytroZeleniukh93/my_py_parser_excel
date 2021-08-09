@@ -1,13 +1,14 @@
 import openpyxl
+from graphic_interface import *
 
-
-class Test:
+class Test():
     def __init__(self):
         self.settings_book = openpyxl.open('settings.xlsx', read_only=True)
         self.settings_sheet = self.settings_book.active
 
     def read_settings(self):
-        self.start_row = int(input('Початковий рядок: '))
+        self.start_row = x.get_text()
+        #self.start_row = int(input('Початковий рядок: '))
         self.end_row = int(input('Кінцейвий рядок: '))
 
         self.all_tags = []
@@ -18,4 +19,4 @@ class Test:
         return self.all_tags
 
 
-
+x = Window()
