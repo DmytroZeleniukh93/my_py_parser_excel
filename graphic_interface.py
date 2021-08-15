@@ -54,14 +54,18 @@ class Window(Sc):
         self.canvas.geometry('400x400+500+200')
         self.canvas.resizable(False, False)
         self.label_s_r = Label(self.canvas, text='Start row')
-        self.entry_s_r = Entry(self.canvas)
+        default_start_row = StringVar(self.canvas, value='4')
+        self.entry_s_r = Entry(self.canvas, textvariable=default_start_row)
         self.label_e_r = Label(self.canvas, text='End row')
-        self.entry_e_r = Entry(self.canvas)
+        default_end_row = StringVar(self.canvas, value='26')
+        self.entry_e_r = Entry(self.canvas, textvariable=default_end_row)
         self.label_error = Label(self.canvas)
         self.label_s_c = Label(self.canvas, text='Start col')
-        self.entry_s_c = Entry(self.canvas)
+        default_start_col = StringVar(self.canvas, value='2')
+        self.entry_s_c = Entry(self.canvas, textvariable=default_start_col)
         self.label_e_c = Label(self.canvas, text='End col')
-        self.entry_e_c = Entry(self.canvas)
+        default_end_col = StringVar(self.canvas, value='16')
+        self.entry_e_c = Entry(self.canvas, textvariable=default_end_col)
 
         self.all_row_col = []
 
@@ -93,11 +97,11 @@ class Window(Sc):
 
     def get_row_and_col(self):
         try:
-            self.all_row_col.append(int(self.entry_s_r.get()))
+            self.all_row_col.append(abs(int(self.entry_s_r.get())))
             self.all_row_col.append(int(self.entry_e_r.get()))
             self.all_row_col.append(int(self.entry_s_c.get()))
             self.all_row_col.append(int(self.entry_e_c.get()))
-            if self.all_row_col[0] > self.all_row_col[1] or self.all_row_col[2] > self.all_row_col[3]:
+            if self.all_row_col[0] > self.all_row_col[1] and self.all_row_col[2] > self.all_row_col[3]: # прочекати
                 self.label_error.config(text='Невірно задані значення')
                 self.all_row_col.clear()
         except ValueError:
