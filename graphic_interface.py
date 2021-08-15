@@ -2,7 +2,7 @@ from tkinter import *
 import openpyxl
 import requests
 from bs4 import BeautifulSoup
-
+# s
 
 class Sc:
     def __init__(self):
