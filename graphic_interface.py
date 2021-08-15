@@ -27,7 +27,8 @@ class Sc:
         tag1 = 0
         tag2 = 1
         tag3 = 2
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
         for row in self.sheet_shop_url.iter_rows(min_row=self.all_row_col[0], max_row=self.all_row_col[1],
                                                  min_col=self.all_row_col[2], max_col=self.all_row_col[3]):
             for cell in row:
@@ -43,7 +44,7 @@ class Sc:
                 if active_column == 17:
                     active_column = 2
                     self.all_row_col[0] += 1
-# --------------- переписати self.get_s_r щоб можна було переключати рядки
+
 
 class Window(Sc):
     def __init__(self):
