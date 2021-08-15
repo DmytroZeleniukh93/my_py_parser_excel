@@ -21,18 +21,19 @@ class Sc:
                 read_cell = cell.value
                 self.all_tags.append(read_cell)
         return print(self.all_tags)
-'''
+
     def get_result(self):
         active_column = 2
         tag1 = 0
         tag2 = 1
         tag3 = 2
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-        for row in self.sheet_shop_url.iter_rows(min_row=self.get_s_r(), max_row=self.get_e_r(), min_col=2, max_col=16):
+        for row in self.sheet_shop_url.iter_rows(min_row=self.all_row_col[0], max_row=self.all_row_col[1],
+                                                 min_col=self.all_row_col[2], max_col=self.all_row_col[3]):
             for cell in row:
                 read_cell = cell.value
                 if read_cell == 'x':
-                    self.new_sheet.cell(row=self.get_s_r(), column=active_column).value = 'x'
+                    self.new_sheet.cell(row=self.all_row_col[0], column=active_column).value = 'x'
                     print('x')
                 else:
                     url = read_cell
@@ -41,8 +42,9 @@ class Sc:
 
                 if active_column == 17:
                     active_column = 2
+                    self.all_row_col[0] += 1
 # --------------- переписати self.get_s_r щоб можна було переключати рядки
-'''
+
 class Window(Sc):
     def __init__(self):
         super().__init__()
@@ -55,6 +57,11 @@ class Window(Sc):
         self.label_e_r = Label(self.canvas, text='End row')
         self.entry_e_r = Entry(self.canvas)
         self.label_error = Label(self.canvas)
+        self.label_s_c = Label(self.canvas, text='Start col')
+        self.entry_s_c = Entry(self.canvas)
+        self.label_e_c = Label(self.canvas, text='End col')
+        self.entry_e_c = Entry(self.canvas)
+
         self.all_row_col = []
 
     def run(self):
@@ -66,6 +73,10 @@ class Window(Sc):
         self.entry_s_r.pack()
         self.label_e_r.pack()
         self.entry_e_r.pack()
+        self.label_s_c.pack()
+        self.entry_s_c.pack()
+        self.label_e_c.pack()
+        self.entry_e_c.pack()
 
         Button(self.canvas, text='Go!', command=self.button_action).pack(pady=10)
         self.label_error.pack()
@@ -77,12 +88,15 @@ class Window(Sc):
         self.get_row_and_col()
         if self.all_row_col:
             self.get_html_tags()
+            self.get_result()
 
     def get_row_and_col(self):
         try:
             self.all_row_col.append(int(self.entry_s_r.get()))
             self.all_row_col.append(int(self.entry_e_r.get()))
-            if self.all_row_col[0] > self.all_row_col[1]:
+            self.all_row_col.append(int(self.entry_s_c.get()))
+            self.all_row_col.append(int(self.entry_e_c.get()))
+            if self.all_row_col[0] > self.all_row_col[1] or self.all_row_col[2] > self.all_row_col[3]:
                 self.label_error.config(text='Невірно задані значення')
                 self.all_row_col.clear()
         except ValueError:
