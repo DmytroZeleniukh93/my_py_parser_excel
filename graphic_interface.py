@@ -38,25 +38,35 @@ class Sc:
                     self.new_sheet.cell(row=self.all_row_col[0], column=self.all_row_col[2]).value = 'x'
                 else:
                     url = read_cell
+                    print(url)
                     self.label_error.configure(text=url)
                     self.label_error.update()
-                    # time.sleep(0.05)
-                    '''
-                try:
-                    source = requests.get(url, headers=headers)
-                    main_text = source.content.decode()
-                    soup = BeautifulSoup(main_text, features="html.parser")
+                    try:
+                        source = requests.get(url, headers=headers)
+                        main_text = source.content.decode()
+                        soup = BeautifulSoup(main_text, features="html.parser")
+                        price = soup.find(self.all_tags[tag1], {self.all_tags[tag2]: self.all_tags[tag3]})
+                        price = price.text
 
-                    price = soup.find(self.all_tags[tag1], {self.all_tags[tag2]: self.all_tags[tag3]})
-                    price = price.text
-                    # price = get_clean_price(price)
-                    formula = f'=HYPERLINK("{url}";"{price}")'
-                    self.new_sheet.cell(row=self.all_row_col[0], column=self.all_row_col[2]).value = formula
-                except BaseException:
-                    print('Error: ' + url)
-                    url_not_work = f'=HYPERLINK("{url}";"!404!")'
-                    self.new_sheet.cell(row=self.all_row_col[0], column=self.all_row_col[2]).value = url_not_work
-                  '''
+                        price = price.replace(' ', '')
+                        price = price.replace('грн', '')
+                        price = price.replace('грн.', '')
+                        price = price.replace('\xa0', '')
+                        price = price.replace('.', '')
+                        price = price.replace('₴', '')
+                        price = price.replace('\n', '')
+                        price = price.replace('\t', '')
+                        price = price.replace('.', '')
+                        price = price.replace(':', '')
+                        price = price.replace('Цена', '')
+
+                        formula = f'=HYPERLINK("{url}";"{price}")'
+                        self.new_sheet.cell(row=self.all_row_col[0], column=self.all_row_col[2]).value = formula
+                    except BaseException:
+                        print('Error: ' + url)
+                        url_not_work = f'=HYPERLINK("{url}";"!404!")'
+                        self.new_sheet.cell(row=self.all_row_col[0], column=self.all_row_col[2]).value = url_not_work
+
                 self.all_row_col[2] += 1
 
                 if self.all_row_col[2] == jump:
@@ -76,7 +86,7 @@ class Window(Sc):
         super().__init__()
         self.canvas = Tk()
         self.canvas.title('Перевірка цін з конкурентами')
-        self.canvas.geometry('400x400+500+200')
+        self.canvas.geometry('600x300+500+200')
         self.canvas.resizable(False, False)
         self.label_s_r = Label(self.canvas, text='Start row')
         default_start_row = StringVar(self.canvas, value='4')
@@ -91,7 +101,6 @@ class Window(Sc):
         self.label_e_c = Label(self.canvas, text='End col')
         default_end_col = StringVar(self.canvas, value='16')
         self.entry_e_c = Entry(self.canvas, textvariable=default_end_col)
-        self.progrsbar = Progressbar(self.canvas, orient=HORIZONTAL, mode='determinate', length=100)
 
         self.all_row_col = []
 
@@ -111,7 +120,6 @@ class Window(Sc):
 
         Button(self.canvas, text='Go!', command=self.button_action).pack(pady=10)
         self.label_error.pack()
-        self.progrsbar.pack()
 
     def button_action(self):
         self.all_tags.clear()
