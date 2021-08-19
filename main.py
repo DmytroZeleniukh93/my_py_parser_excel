@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 
 
 class ScrapPrices:
+    replace_list = [' ', 'грн', '.', 'грн.', '\xa0', '₴', '\n', '\t', 'Цена', ':']
+
     def __init__(self):
         self.read_settings = openpyxl.open('settings.xlsx', read_only=True)
         self.sheet_settings = self.read_settings.active
@@ -19,7 +21,7 @@ class ScrapPrices:
             for cell in row:
                 read_cell = cell.value
                 self.all_tags.append(read_cell)
-                print(read_cell) # добавити фічу забрати пробіл в кінці
+                print(read_cell)  # добавити фічу забрати пробіл в кінці
 
     def get_result(self, start_row, end_row, start_col, end_col):
         tag1 = 0
@@ -39,14 +41,13 @@ class ScrapPrices:
                         main_text = source.content.decode()
                         soup = BeautifulSoup(main_text, features="html.parser")
                         price = soup.find(self.all_tags[tag1], {self.all_tags[tag2]: self.all_tags[tag3]})
-                        price = price.text
-
-                        formula = f'=HYPERLINK("{url}";"{price}")'
-                        self.new_sheet.cell(row=start_row, column=start_col).value = formula
-                    except BaseException:
+                        price = self.__get_clean_price(price.text)
+                        to_write = f'=HYPERLINK("{url}";"{price}")'
+                        self.new_sheet.cell(row=start_row, column=start_col).value = to_write
+                    except Exception:
                         print('Error: ' + url)
-                        url_not_work = f'=HYPERLINK("{url}";"!404!")'
-                        self.new_sheet.cell(row=start_row, column=start_col).value = url_not_work
+                        to_write = f'=HYPERLINK("{url}";"!404!")'
+                        self.new_sheet.cell(row=start_row, column=start_col).value = to_write
                 start_col += 1
                 if start_col == end_col + 1:
                     start_row += 1
@@ -55,9 +56,15 @@ class ScrapPrices:
                     tag2 += 3
                     tag3 += 3
 
+    def __get_clean_price(self, price):
+        for to_replace in self.replace_list:
+            price = price.replace(to_replace, '')
+        return price
+
     def __close_files(self):
         self.read_settings.close()
         self.read_shop_url.close()
+        self.new_book.close()
 
     def save(self):
         self.new_book.save('class_price_url.xlsx')
@@ -70,12 +77,6 @@ if __name__ == "__main__":
     scrap_price.get_tags(5, 5)
     scrap_price.get_result(5, 5, 2, 4)
     scrap_price.save()
-
-
-
-
-
-
 
 '''
 # Відкриває існуючий xlsx файл з url
