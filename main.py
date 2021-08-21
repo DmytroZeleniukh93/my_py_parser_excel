@@ -21,21 +21,28 @@ class ScrapPrices:
             for cell in row:
                 read_cell = cell.value
                 self.all_tags.append(read_cell)
-                print(read_cell)  # добавити фічу забрати пробіл в кінці
+                print(read_cell)  # добавити фічу забрати пробіл в кінці ексель файлу
 
     def get_result(self, start_row, end_row, start_col, end_col):
         tag1 = 0
         tag2 = 1
         tag3 = 2
+        v = 8.33
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
         for row in self.shop_url.iter_rows(min_row=start_row, max_row=end_row, min_col=start_col, max_col=end_col):
             for cell in row:
                 read_cell = cell.value
+                self.pb.configure(value=v)
+                self.pb.update()
                 if read_cell == 'x':
                     self.new_sheet.cell(row=start_row, column=start_col).value = 'x'
                 else:
                     url = read_cell
                     print(url)
+                    self.label_url.configure(text=url)
+                    self.label_url.update()
+
+                    '''
                     try:
                         source = requests.get(url, headers=headers)
                         main_text = source.content.decode()
@@ -48,7 +55,9 @@ class ScrapPrices:
                         print('Error: ' + url)
                         to_write = f'=HYPERLINK("{url}";"!404!")'
                         self.new_sheet.cell(row=start_row, column=start_col).value = to_write
+                    '''
                 start_col += 1
+                v += 8.33
                 if start_col == end_col + 1:
                     start_row += 1
                     start_col = 2
@@ -71,14 +80,14 @@ class ScrapPrices:
         self.new_book.close()
         self.__close_files()
 
-
+'''
 if __name__ == "__main__":
     scrap_price = ScrapPrices()
     scrap_price.get_tags(5, 5)
     scrap_price.get_result(5, 5, 2, 4)
     scrap_price.save()
 
-'''
+
 # Відкриває існуючий xlsx файл з url
 read_book = openpyxl.open('shop_url.xlsx', read_only=True)
 sheet_read = read_book.active
