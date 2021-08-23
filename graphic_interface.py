@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import Progressbar
 from main import ScrapPrices
+from tkinter import messagebox
 
 
 class Window(ScrapPrices):
@@ -8,10 +9,10 @@ class Window(ScrapPrices):
         super().__init__()
         self.root = Tk()
         self.root.title('Перевірка цін з конкурентами')
-        self.root.geometry('600x400+500+200')
-        self.root.resizable(True, True)
+        self.root.geometry('600x370+500+200')
+        self.root.resizable(False, False)
         self.canvas = Canvas(self.root)
-        self.my_image = PhotoImage(file='excel_png.png')
+        self.my_image = PhotoImage(file='excel_image.png')
         self.canvas.create_image(210, 190, image=self.my_image)
         self.label_url = Label(self.root)
         Label(self.root, text='Info: ').place(x=30, y=30)
@@ -49,6 +50,8 @@ class Window(ScrapPrices):
         self.get_tags(self.s_row, self.e_row)
         self.get_result(self.s_row, self.e_row, self.s_col, self.e_col)
         self.save()
+        messagebox.showinfo('Info', 'Сканування завершено')
+        self.root.destroy()
 
     def get_nums(self):
         self.s_row = int(self.start_row.get())

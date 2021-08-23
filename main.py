@@ -1,11 +1,10 @@
 import openpyxl
 import requests
-import time
 from bs4 import BeautifulSoup
 
 
 class ScrapPrices:
-    replace_list = [' ', 'грн', '.', 'грн.', '\xa0', '₴', '\n', '\t', 'Цена', ':']
+    replace_list = (' ', 'грн', '.', 'грн.', '\xa0', '₴', '\n', '\t', 'Цена', ':')
     all_tags = []
 
     def __init__(self):
@@ -21,7 +20,7 @@ class ScrapPrices:
             for cell in row:
                 read_cell = cell.value
                 self.all_tags.append(read_cell)
-                print(read_cell)  # добавити фічу забрати пробіл в кінці ексель файлу
+                # print(read_cell)  # добавити фічу забрати пробіл в кінці ексель файлу
 
     def get_result(self, start_row, end_row, start_col, end_col):
         tag1 = 0
@@ -39,7 +38,7 @@ class ScrapPrices:
                     self.new_sheet.cell(row=start_row, column=start_col).value = 'x'
                 else:
                     url = read_cell
-                    print(url)
+                   # print(url)
                     self.label_url.configure(text=url)
                     self.label_url.update()
 
@@ -52,7 +51,7 @@ class ScrapPrices:
                         to_write = f'=HYPERLINK("{url}";"{price}")'
                         self.new_sheet.cell(row=start_row, column=start_col).value = to_write
                     except Exception:
-                        print('Error: ' + url)
+                        #print('Error: ' + url)
                         to_write = f'=HYPERLINK("{url}";"!404!")'
                         self.new_sheet.cell(row=start_row, column=start_col).value = to_write
 
@@ -76,6 +75,6 @@ class ScrapPrices:
         self.new_book.close()
 
     def save(self):
-        self.new_book.save('class_price_url.xlsx')
+        self.new_book.save('new_price.xlsx')
         self.new_book.close()
         self.__close_files()
